@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 interface User {
   name: string;
   email: string;
-  api_key: string;
 }
 
 export function useAuth() {
@@ -12,13 +11,11 @@ export function useAuth() {
   useEffect(() => {
     const userName = localStorage.getItem('name');
     const userEmail = localStorage.getItem('email');
-    const userapi_key = localStorage.getItem('api_key');
     
-    if (userName && userEmail && userapi_key) {
+    if (userName && userEmail) {
       setUser({
-        name: JSON.parse(userName),
-        email: JSON.parse(userEmail),
-        api_key: JSON.parse(userapi_key),
+        name: userName,
+        email: userEmail
       });
     }
   }, []);

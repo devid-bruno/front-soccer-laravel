@@ -21,12 +21,9 @@ export const login = async (loginData: LoginData) => {
     const response = await axios.post(`${API_URL}/api/login`, loginData,{
       withCredentials: true,
     });
-    localStorage.setItem('id', JSON.stringify(response.data.user.id));
     localStorage.setItem('name', JSON.stringify(response.data.user.name));
     localStorage.setItem('email', JSON.stringify(response.data.user.email));
-    localStorage.setItem('api_key', JSON.stringify(response.data.user.api_key));
     return response;
-    
   } catch (error: any) {
     if (error.response) {
       throw new Error(error.response.data.message || 'Erro ao fazer login');
@@ -57,32 +54,12 @@ export const createUser = async (userData: UserData) => {
 
 export const logout = async () => {
   try {
-    await axios.post(`${API_URL}/api/users`, {}, { withCredentials: true });
+    await axios.post(`${API_URL}/api/logout`, {}, { withCredentials: true });
   } catch (error) {
     console.error('Erro ao fazer logout:', error);
   }
 };
 
-export const setApiKey = async (apiKey: string) => {
-  const id = localStorage.getItem('id');
-  if (!id) {
-    console.error('ID do usuário não encontrado no localStorage');
-    return;
-  }
-
-  try {
-    const response = await axios.patch(`${API_URL}/api/users/${id}`, { api_key: apiKey }, { withCredentials: true });
-    console.log('Chave da API configurada com sucesso:', response.data);
-  } catch (error: any) {
-    if (error.response) {
-      console.error('Erro ao configurar a chave da API:', error.response.data.message || error.response.data);
-    } else if (error.request) {
-      console.error('Nenhuma resposta do servidor ao configurar a chave da API');
-    } else {
-      console.error('Erro ao configurar a solicitação para a chave da API:', error.message);
-    }
-  }
-};
 
 export const teams = async () => {
   try {
