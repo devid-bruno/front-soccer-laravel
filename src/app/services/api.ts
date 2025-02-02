@@ -16,6 +16,10 @@ interface UserData {
   password: string;
 }
 
+interface apiKey{
+  api_key: string;
+}
+
 export const login = async (loginData: LoginData) => {
   try {
     const response = await axios.post(`${API_URL}/api/login`, loginData,{
@@ -23,6 +27,9 @@ export const login = async (loginData: LoginData) => {
     });
     localStorage.setItem('name', JSON.stringify(response.data.user.name));
     localStorage.setItem('email', JSON.stringify(response.data.user.email));
+    localStorage.setItem('api_key', JSON.stringify(response.data.user.api_key));
+    localStorage.setItem('idUser', JSON.stringify(response.data.user.id));
+
     return response;
   } catch (error: any) {
     if (error.response) {
@@ -59,6 +66,24 @@ export const logout = async () => {
     console.error('Erro ao fazer logout:', error);
   }
 };
+
+export const updateKeyUser = async (apiKey: apiKey) => {
+  const userId = localStorage.getItem('idUser');
+  try {
+    const response = await axios.patch(`${API_URL}/api/users/${userId}`, apiKey, {
+      withCredentials: true,
+    })
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data.message || 'Erro ao atualizar api key');
+    } else if (error.request) {
+      throw new Error('Nenhuma resposta do servidor');
+    } else {
+      throw new Error('Erro ao configurar a solicitação');
+    }
+  }
+}
 
 
 export const teams = async () => {

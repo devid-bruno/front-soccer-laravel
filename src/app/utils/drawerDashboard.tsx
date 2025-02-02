@@ -14,6 +14,7 @@ import Grid from '@mui/material/Grid2';
 import AccountDemoSignedIn from '../dashboardComponents/Signedin';
 import { useAuth } from '../hooks/sessionUser';
 import DashboardContent from '../dashboard/DashboardContent';
+import { useRouter } from 'next/navigation';
 
 const NAVIGATION: Navigation = [
   {
@@ -77,14 +78,18 @@ const demoTheme = extendTheme({
 
 function useDemoRouter(initialPath: string): Router {
   const [pathname, setPathname] = React.useState(initialPath);
+  const nextRouter = useRouter();
 
   const router = React.useMemo(() => {
     return {
       pathname,
       searchParams: new URLSearchParams(),
-      navigate: (path: string | URL) => setPathname(String(path)),
+      navigate: (path: string | URL) => {
+        setPathname(String(path));
+        nextRouter.push(String(path));
+      },
     };
-  }, [pathname]);
+  }, [pathname, nextRouter]);
 
   return router;
 }

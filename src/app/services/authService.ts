@@ -1,4 +1,4 @@
-import { login, createUser } from './api';
+import { login, createUser, updateKeyUser } from './api';
 
 export const handleLogin = async (email: string, password: string) => {
   const payload = { email, password };
@@ -11,3 +11,9 @@ export const handleCreateUser = async (email: string, name: string, password: st
   const response = await createUser(payload);
   return response;
 };
+
+export const handleUpdateKeyUser = async (apiKey: string) => {
+  const payload = { api_key: apiKey };
+  const response = await updateKeyUser(payload);
+  return response;
+}
