@@ -88,13 +88,19 @@ export const updateKeyUser = async (apiKey: apiKey) => {
 
 export const teams = async () => {
   try {
-    const team = await axios.get(`${API_URL_TEAMS}/teams`, {
+    const team = await axios.get(`${API_URL_TEAMS}/api/football/matches`, {
       headers: {
         'x-rapidapi-host': 'v3.football.api-sports.io',
         'x-rapidapi-key': 'a3d1d0f5',
       }
     });
-  } catch (error) {
-    
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data.message || 'Erro ao recuperar requisição com base dos parámetros');
+    } else if (error.request) {
+      throw new Error('Nenhuma resposta do servidor');
+    } else {
+      throw new Error('Erro ao configurar a solicitação');
+    }
   }
 }

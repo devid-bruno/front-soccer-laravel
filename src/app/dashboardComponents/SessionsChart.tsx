@@ -1,10 +1,16 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Chip from '@mui/material/Chip';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
+import { Card, 
+  CardContent, 
+  Typography, 
+  Stack, 
+  Chip, 
+  Select, 
+  MenuItem, 
+  FormControl, 
+  InputLabel, 
+  SelectChangeEvent } 
+  from '@mui/material';
 import { LineChart } from '@mui/x-charts/LineChart';
 
 function AreaGradient({ color, id }: { color: string; id: string }) {
@@ -43,12 +49,33 @@ export default function SessionsChart() {
     theme.palette.primary.dark,
   ];
 
+  const [selectedOption, setSelectedOption] = React.useState('');
+
+  const handleChange = (event: SelectChangeEvent<string>) => {
+    setSelectedOption(event.target.value as string);
+  };
+
   return (
     <Card variant="outlined" sx={{ width: '100%' }}>
       <CardContent>
         <Typography component="h2" variant="subtitle2" gutterBottom>
-          Sessions
+          Times
         </Typography>
+
+        <FormControl fullWidth variant='outlined' sx={{ width: '100%' }}>
+          <InputLabel id="select-label">Select</InputLabel>
+          <Select
+            labelId="select-label"
+            id="select"
+            value={selectedOption}
+            label="Opção"
+            onChange={handleChange}
+          >
+            <MenuItem value={10}>Last 7 days</MenuItem>
+            <MenuItem value={20}>Last 30 days</MenuItem>
+            <MenuItem value={30}>Last 90 days</MenuItem>
+          </Select>
+        </FormControl>
         <Stack sx={{ justifyContent: 'space-between' }}>
           <Stack
             direction="row"
