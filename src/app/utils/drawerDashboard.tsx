@@ -3,14 +3,12 @@
 import * as React from 'react';
 import { extendTheme, styled } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
 import { AppProvider, Navigation, Router } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
-import Grid from '@mui/material/Grid2';
 import AccountDemoSignedIn from '../dashboardComponents/Signedin';
 import { useAuth } from '../hooks/sessionUser';
 import DashboardContent from '../dashboard/DashboardContent';
@@ -18,34 +16,25 @@ import { useRouter } from 'next/navigation';
 
 const NAVIGATION: Navigation = [
   {
-    kind: 'header',
-    title: 'Main items',
-  },
-  {
     segment: 'dashboard',
     title: 'Dashboard',
     icon: <DashboardIcon />,
-  },
-  {
-    segment: 'Times',
-    title: 'Times',
-    icon: <ShoppingCartIcon />,
   },
   {
     kind: 'divider',
   },
   {
     kind: 'header',
-    title: 'Analytics',
+    title: 'Análises',
   },
   {
-    segment: 'classification_teams',
+    segment: 'dashboard/classificationteams',
     title: 'Classificação de times',
     icon: <BarChartIcon />,
     children: [
       {
-        segment: 'sales',
-        title: 'Sales',
+        segment: '',
+        title: 'Tabela',
         icon: <DescriptionIcon />,
       },
       {
@@ -93,14 +82,6 @@ function useDemoRouter(initialPath: string): Router {
 
   return router;
 }
-
-const Skeleton = styled('div')<{ height: number }>(({ theme, height }) => ({
-  backgroundColor: theme.palette.action.hover,
-  borderRadius: theme.shape.borderRadius,
-  height,
-  content: '" "',
-}));
-
 
 export default function DrawerLeftDashboard(props: { window?: () => Window }) {
   const { window } = props;

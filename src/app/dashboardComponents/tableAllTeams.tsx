@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
 import axios from 'axios';
 import Notification from '../utils/notification';
+import { StatisticsModal } from '../components/StatisticsModal';
 
 const API_URL_TEAMS = 'http://localhost:8990';
 
@@ -19,9 +20,11 @@ export default function AllTeams() {
   const [teams, setTeams] = React.useState<Team[]>([]);
   const [league, setLeague] = React.useState('');
   const [season, setSeason] = React.useState('');
-  const [param3, setParam3] = React.useState('');
+  const [team, setTeam] = React.useState('');
   const [notification, setNotification] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [statistics, setStatistics] = React.useState<any>(null);
 
 
   const handleFetchTeams = async () => {
@@ -35,14 +38,13 @@ export default function AllTeams() {
         params: {
           league,
           season,
-          param3,
         },
       });
 
       if(response.status === 200){
         setError(null);
         setNotification('Times recuperados com sucesso!');
-        setTeams(response.data.response.map((item: any) => item.team));
+        setTeams(response.data.response.map((item: any) => item.team as Team));
       } else{
         setNotification(response.data.error);
       }
@@ -52,52 +54,77 @@ export default function AllTeams() {
     }
   };
 
+  const handleFetchStatistics = async (teamId: number) => {
+    const apiKey = localStorage.getItem('api_key');
+    try {
+      const response = await axios.get(`${API_URL_TEAMS}/api/football/teams/statistics`, {
+        headers: {
+          'x-rapidapi-host': 'v3.football.api-sports.io',
+          'x-rapidapi-key': `${apiKey}`,
+        },
+        params: {
+          league: league,
+          season: season,
+          team: teamId,
+        },
+      });
+
+      if(response.status === 200){
+        setError(null);
+        setStatistics(response.data);
+        setIsModalOpen(true);
+        setNotification('Estatísticas recuperadas com sucesso!');
+      } else{
+        setNotification(response.data.error);
+      }
+    } catch (error: any) {
+      console.error('Erro ao recuperar as estatísticas:', error);
+      setNotification(error.response?.data?.message);
+    }
+  }
+
+  React.useEffect(() => {
+    setSeason('');
+  }, [league]);
+
   return (
     <div>
       <FormControl variant="outlined" sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel id="league-label">Liga (ID)</InputLabel>
+        <InputLabel id="league-label">Liga</InputLabel>
         <Select
           labelId="league-label"
           id="league"
           value={league}
           onChange={(e) => setLeague(e.target.value)}
-          label="Parâmetro 1"
         >
           <MenuItem value=""><em>Nenhum</em></MenuItem>
-          <MenuItem value="71">71</MenuItem>
+          <MenuItem value="71">Brasileirão Série A</MenuItem>
+          <MenuItem value="72">Brasileirão Série B</MenuItem>
         </Select>
       </FormControl>
-      <FormControl variant="outlined" sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel id="season-label">Parâmetro 2 (ano)</InputLabel>
-        <Select
-          labelId="season-label"
-          id="season"
-          value={season}
-          onChange={(e) => setSeason(e.target.value)}
-          label="Parâmetro 2"
-        >
-          <MenuItem value=""><em>Nenhum</em></MenuItem>
-          <MenuItem value="2023">2023</MenuItem>
-          <MenuItem value="value2">Valor 2</MenuItem>
-        </Select>
-      </FormControl>
-      <FormControl variant="outlined" sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel id="param3-label">Parâmetro 3</InputLabel>
-        <Select
-          labelId="param3-label"
-          id="param3"
-          value={param3}
-          onChange={(e) => setParam3(e.target.value)}
-          label="Parâmetro 3"
-        >
-          <MenuItem value=""><em>Nenhum</em></MenuItem>
-          <MenuItem value="value1">Valor 1</MenuItem>
-          <MenuItem value="value2">Valor 2</MenuItem>
-        </Select>
-      </FormControl>
+      
+      {league && (
+        <>
+          <FormControl variant="outlined" sx={{ m: 1, minWidth: 120 }}>
+            <InputLabel id="season-label">Ano</InputLabel>
+            <Select
+              labelId="season-label"
+              id="season"
+              value={season}
+              onChange={(e) => setSeason(e.target.value)}
+            >
+              <MenuItem value=""><em>Nenhum</em></MenuItem>
+              <MenuItem value="2023">2023</MenuItem>
+              <MenuItem value="value2">Valor 2</MenuItem>
+            </Select>
+          </FormControl>
+        </>
+      )}
+
       <Button variant="contained" color="primary" onClick={handleFetchTeams}>
         Buscar Times
       </Button>
+      
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -108,6 +135,7 @@ export default function AllTeams() {
               <TableCell align="right">Fundado</TableCell>
               <TableCell align="right">Nacional</TableCell>
               <TableCell align="right">Logo</TableCell>
+              <TableCell align="right">Estatistica de time</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -123,11 +151,22 @@ export default function AllTeams() {
                 <TableCell align="right">
                   <img src={team.logo} alt={`${team.name} logo`} width="30" />
                 </TableCell>
+                <TableCell align="right">
+                  <Button variant="contained" onClick={() => handleFetchStatistics(team.id)} color="primary">
+                    Ver Estatisticas
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <StatisticsModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={statistics}
+      />
     </div>
   );
 }

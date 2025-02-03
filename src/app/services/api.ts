@@ -96,7 +96,7 @@ export const teams = async () => {
     });
   } catch (error: any) {
     if (error.response) {
-      throw new Error(error.response.data.message || 'Erro ao recuperar requisição com base dos parámetros');
+      throw new Error(error.response.data.message || 'Erro ao recuperar requisição com base dos parâmetros');
     } else if (error.request) {
       throw new Error('Nenhuma resposta do servidor');
     } else {
