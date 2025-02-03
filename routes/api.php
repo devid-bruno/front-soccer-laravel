@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ApiFootballController;
 
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
+
 Route::middleware([JwtMiddleware::class])->group(function () {
     Route::get('users', [UserController::class, 'index']);
     Route::post('logout', [UserController::class, 'logout']);
@@ -16,7 +17,7 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     Route::get('users/{user}/api_key', [UserController::class, 'listApiKeyByIdUser']);
 
     Route::prefix('football')->group(function (){
-        Route::get('/matches', [ApiFootballController::class, 'getMatches']);
+        Route::get('/matches', [ApiFootballController::class, 'getMatches'])->middleware('jwt');
     });
 });
 

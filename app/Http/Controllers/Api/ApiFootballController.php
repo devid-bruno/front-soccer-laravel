@@ -23,7 +23,7 @@ class ApiFootballController extends Controller
 
         if($validator->fails()){
             return response()->json([
-                'error' => 'Parámetros inválidos',
+                'error' => 'Parâmetros inválidos',
                 'details' => $validator->errors()
             ], 422);
         }
