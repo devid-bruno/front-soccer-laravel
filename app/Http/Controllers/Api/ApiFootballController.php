@@ -45,4 +45,71 @@ class ApiFootballController extends Controller
             ], 500);
         }
     }
+
+    public function getStatisticsTeam(){
+
+        $validator = Validator::make(request()->all(), [
+            'team' => 'required|integer',
+            'league' => 'required|integer',
+            'season' => 'required|integer|digits:4',
+            'date' => 'sometimes|date_format:Y-m-d',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'error' => 'Parâmetros inválidos',
+                'details' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $response = $this->client->get('/teams/statistics', $validator->validated());
+
+            if($response->successful()){
+                return $response->json();
+            }
+            return $response->json([
+                'error' => 'Erro na API externa',
+                'status' => $response->status()
+            ], 502);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erro interno no servidor',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getRoundsByTeamId(){
+        $validator = Validator::make(request()->all(), [
+            'team' => 'required|integer',
+            'league' => 'required|integer',
+            'season' => 'required|integer|digits:4',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'error' => 'Parâmetros inválidos',
+                'details' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $response = $this->client->get('/fixtures', $validator->validated());
+
+            if($response->successful()){
+                return $response->json();
+            }
+            return $response->json([
+                'error' => 'Erro na API externa',
+                'status' => $response->status()
+            ], 502);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erro interno no servidor',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

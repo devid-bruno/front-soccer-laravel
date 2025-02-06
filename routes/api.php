@@ -18,6 +18,8 @@ Route::middleware([JwtMiddleware::class])->group(function () {
 
     Route::prefix('football')->group(function (){
         Route::get('/matches', [ApiFootballController::class, 'getMatches'])->middleware('jwt');
+        Route::get('/teams/statistics', [ApiFootballController::class, 'getStatisticsTeam'])->middleware('jwt');
+        Route::get('/rounds', [ApiFootballController::class, 'getRoundsByTeamId'])->middleware('jwt');
     });
 });
 
