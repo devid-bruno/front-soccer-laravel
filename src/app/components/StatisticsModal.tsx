@@ -26,10 +26,41 @@ export const StatisticsModal = ({ isOpen, onClose, data }: Props) => {
   if (!isOpen) return null;
 
   return (
-    <div>
-        <Modal>
-            
-        </Modal>
-    </div>
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      aria-labelledby="modal-title"
+      aria-describedby="modal-description"
+    >
+      <Box sx={style}>
+        <Typography id="modal-title" variant="h6" component="h2">
+          Estatísticas do Time
+        </Typography>
+        
+        {data?.response && (
+          <div>
+            <Typography sx={{ mt: 2 }}>
+              Jogos: {data.response.fixtures.played.total}
+            </Typography>
+            <Typography>
+              Vitórias: {data.response.fixtures.wins.total}
+            </Typography>
+            <Typography>
+              Gols: {data.response.goals.for.total.total}
+            </Typography>
+          </div>
+        )}
+
+        {!data && <Typography sx={{ mt: 2 }}>Carregando dados...</Typography>}
+
+        <Button 
+          onClick={onClose} 
+          sx={{ mt: 3 }}
+          variant="contained"
+        >
+          Fechar
+        </Button>
+      </Box>
+    </Modal>
   );
 };

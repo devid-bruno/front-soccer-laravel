@@ -86,7 +86,7 @@ export const updateKeyUser = async (apiKey: apiKey) => {
 }
 
 
-export const teams = async () => {
+export const teams = async (apiKey: apiKey) => {
   try {
     const team = await axios.get(`${API_URL_TEAMS}/api/football/matches`, {
       headers: {

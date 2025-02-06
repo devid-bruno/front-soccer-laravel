@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
+import { Stack, MenuList, Menu, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
 import axios from 'axios';
 import Notification from '../utils/notification';
 import { StatisticsModal } from '../components/StatisticsModal';
-
+import MoreIcon from '@mui/icons-material/MoreVert';
 const API_URL_TEAMS = 'http://localhost:8990';
 
 export default function AllTeams() {
@@ -25,6 +25,19 @@ export default function AllTeams() {
   const [error, setError] = React.useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [statistics, setStatistics] = React.useState<any>(null);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [selectedTeam, setSelectedTeam] = React.useState<Team | null>(null);
+
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, team: Team) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedTeam(team);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedTeam(null);
+  };
 
 
   const handleFetchTeams = async () => {
@@ -135,7 +148,7 @@ export default function AllTeams() {
               <TableCell align="right">Fundado</TableCell>
               <TableCell align="right">Nacional</TableCell>
               <TableCell align="right">Logo</TableCell>
-              <TableCell align="right">Estatistica de time</TableCell>
+              <TableCell align="right">Opções</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -152,9 +165,27 @@ export default function AllTeams() {
                   <img src={team.logo} alt={`${team.name} logo`} width="30" />
                 </TableCell>
                 <TableCell align="right">
-                  <Button variant="contained" onClick={() => handleFetchStatistics(team.id)} color="primary">
-                    Ver Estatisticas
-                  </Button>
+                  <Stack direction="column">
+                    <MenuList>
+                      <Button
+                        variant="text"
+                        fullWidth
+                        startIcon={<MoreIcon  />}
+                        onClick={(event) => handleMenuOpen(event, team)}
+                        sx={{ justifyContent: 'flex-start' }}
+                      >
+                      </Button>
+                    </MenuList>
+                  </Stack>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                  >
+                    <MenuItem onClick={() => selectedTeam?.id && handleFetchStatistics(selectedTeam.id)}>Ver Estatisticas</MenuItem>
+                    <MenuItem >Ver jogos</MenuItem>
+                    <MenuItem onClick={handleMenuClose}>Últimos resultados</MenuItem>
+                  </Menu>
                 </TableCell>
               </TableRow>
             ))}
